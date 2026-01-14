@@ -9,6 +9,10 @@ import './styles/animations.css';
 
 // Pixel art style Spin the Bottle meeting picker
 export default function SpinTheBottle() {
+  // Loading splash screen state
+  const [showSplash, setShowSplash] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+
   // State with localStorage persistence
   const [names, setNames] = useLocalStorage(STORAGE_KEYS.NAMES, ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve', 'Frank']);
   const [bottleLabel, setBottleLabel] = useLocalStorage(STORAGE_KEYS.LABEL, 'Weekly Sync');
@@ -286,6 +290,29 @@ export default function SpinTheBottle() {
     };
   }, [audio]);
 
+  // Splash screen loading animation
+  useEffect(() => {
+    if (!showSplash) return;
+
+    const loadingDuration = 3000; // 3 seconds
+    const startTime = Date.now();
+
+    const updateProgress = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min((elapsed / loadingDuration) * 100, 100);
+      setLoadingProgress(progress);
+
+      if (progress < 100) {
+        requestAnimationFrame(updateProgress);
+      } else {
+        // Add small delay after reaching 100% for dramatic effect
+        setTimeout(() => setShowSplash(false), 300);
+      }
+    };
+
+    requestAnimationFrame(updateProgress);
+  }, [showSplash]);
+
   // Keyboard support
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -311,6 +338,247 @@ export default function SpinTheBottle() {
 
   return (
     <div className="min-h-screen pixel-font text-xs" style={{ backgroundColor: '#0f0f23' }}>
+      {/* Loading Splash Screen */}
+      {showSplash && (
+        <div
+          className="fixed inset-0 flex flex-col items-center justify-center"
+          style={{
+            zIndex: 1000,
+            backgroundColor: '#0f0f23',
+            background: 'radial-gradient(ellipse at center, #1a1a3e 0%, #0f0f23 70%)',
+          }}
+        >
+          {/* Sparkle particles floating */}
+          {Array.from({ length: 60 }).map((_, i) => {
+            // Use seeded values for consistent positioning
+            const topPos = 5 + ((i * 23) % 85);
+            const leftPos = 5 + ((i * 37) % 90);
+            const duration = 2 + ((i * 7) % 30) / 10;
+            const delay = (i * 11) % 20 / 10;
+            const size = 3 + ((i * 3) % 3);
+            return (
+              <div
+                key={`sparkle-${i}`}
+                className="splash-sparkle"
+                style={{
+                  position: 'absolute',
+                  top: `${topPos}%`,
+                  left: `${leftPos}%`,
+                  width: `${size}px`,
+                  height: `${size}px`,
+                  backgroundColor: '#ffd700',
+                  boxShadow: '0 0 8px #ffd700, 0 0 16px #ff6b6b',
+                  animation: `splash-sparkle-float ${duration}s ease-in-out infinite`,
+                  animationDelay: `${delay}s`,
+                }}
+              />
+            );
+          })}
+
+          {/* Ice bucket with champagne bottle */}
+          <div className="splash-bucket-container" style={{ position: 'relative', marginBottom: '30px' }}>
+            <svg viewBox="0 0 200 220" width="280" height="308" style={{ filter: 'drop-shadow(0 10px 30px rgba(0,0,0,0.5))' }}>
+              {/* Ice bucket - back rim */}
+              <ellipse cx="100" cy="130" rx="70" ry="20" fill="#6b6b8a" />
+
+              {/* Ice bucket - body */}
+              <path d="M30 130 L40 200 L160 200 L170 130" fill="#8a8aaa" />
+              <path d="M35 130 L45 195 L100 195" fill="#9a9abf" opacity="0.6" />
+              <path d="M165 130 L155 195 L120 195" fill="#6a6a8a" opacity="0.4" />
+
+              {/* Ice bucket - decorative bands */}
+              <rect x="38" y="145" width="124" height="6" fill="#ffd700" rx="1" />
+              <rect x="40" y="146" width="40" height="4" fill="#ffed4a" opacity="0.5" />
+              <rect x="42" y="175" width="116" height="6" fill="#ffd700" rx="1" />
+              <rect x="44" y="176" width="35" height="4" fill="#ffed4a" opacity="0.5" />
+
+              {/* Ice bucket - front rim */}
+              <ellipse cx="100" cy="130" rx="70" ry="15" fill="#aaaacc" />
+              <ellipse cx="85" cy="128" rx="25" ry="5" fill="#ccccee" opacity="0.5" />
+
+              {/* Ice cubes visible in bucket */}
+              <rect x="50" y="115" width="20" height="18" fill="#b4d7e8" rx="2" opacity="0.8" />
+              <rect x="52" y="117" width="8" height="6" fill="#e0f4ff" opacity="0.6" />
+              <rect x="75" y="118" width="18" height="15" fill="#c5e3f0" rx="2" opacity="0.7" />
+              <rect x="77" y="120" width="6" height="5" fill="#e0f4ff" opacity="0.5" />
+              <rect x="110" y="116" width="22" height="16" fill="#b4d7e8" rx="2" opacity="0.75" />
+              <rect x="112" y="118" width="8" height="5" fill="#e0f4ff" opacity="0.6" />
+              <rect x="135" y="119" width="16" height="14" fill="#c5e3f0" rx="2" opacity="0.7" />
+
+              {/* Champagne bottle neck sticking out */}
+              <rect x="92" y="20" width="16" height="35" fill={BOTTLE_COLOR.body} />
+              <rect x="93" y="22" width="5" height="30" fill={BOTTLE_COLOR.bodyLight} opacity="0.5" />
+
+              {/* Cork with gold foil */}
+              <ellipse cx="100" cy="8" rx="10" ry="5" fill="#ffd700" />
+              <ellipse cx="97" cy="6" rx="4" ry="2" fill="#ffed4a" opacity="0.6" />
+              <rect x="90" y="8" width="20" height="12" fill="#ffd700" />
+              <rect x="91" y="9" width="7" height="9" fill="#ffed4a" opacity="0.4" />
+
+              {/* Cork body */}
+              <rect x="92" y="20" width="16" height="8" fill="#d2691e" />
+              <rect x="93" y="21" width="5" height="6" fill="#daa520" opacity="0.4" />
+
+              {/* Bottle neck ring */}
+              <rect x="90" y="50" width="20" height="6" fill={BOTTLE_COLOR.body} />
+              <rect x="91" y="51" width="6" height="4" fill={BOTTLE_COLOR.bodyLight} opacity="0.4" />
+
+              {/* Bottle shoulder visible */}
+              <polygon points="90,56 78,80 122,80 110,56" fill={BOTTLE_COLOR.body} />
+              <polygon points="91,57 82,78 91,78" fill={BOTTLE_COLOR.bodyLight} opacity="0.4" />
+
+              {/* Bottle body visible above ice */}
+              <rect x="78" y="80" width="44" height="45" fill={BOTTLE_COLOR.body} />
+              <rect x="80" y="82" width="12" height="40" fill={BOTTLE_COLOR.bodyLight} opacity="0.4" />
+              <rect x="114" y="82" width="6" height="40" fill={BOTTLE_COLOR.bodyDark} opacity="0.3" />
+
+              {/* Bottle label */}
+              <rect x="80" y="88" width="40" height="28" fill="#f5deb3" />
+              <rect x="81" y="89" width="38" height="26" fill="#ffe4b5" />
+              <rect x="82" y="90" width="36" height="3" fill="#c4a052" />
+              <rect x="82" y="112" width="36" height="3" fill="#c4a052" />
+              <rect x="96" y="94" width="8" height="2" fill="#87ceeb" />
+              <text x="100" y="104" textAnchor="middle" fontSize="5" fontFamily="'Press Start 2P', cursive" fill="#1a1a2e">PARTY</text>
+              <text x="100" y="110" textAnchor="middle" fontSize="4" fontFamily="'Press Start 2P', cursive" fill="#1a1a2e">TIME</text>
+
+              {/* Bucket handles */}
+              <ellipse cx="25" cy="150" rx="8" ry="15" fill="none" stroke="#ffd700" strokeWidth="4" />
+              <ellipse cx="175" cy="150" rx="8" ry="15" fill="none" stroke="#ffd700" strokeWidth="4" />
+
+              {/* Water droplets / condensation */}
+              <circle cx="45" cy="160" r="3" fill="#b4d7e8" opacity="0.6" />
+              <circle cx="155" cy="170" r="2" fill="#b4d7e8" opacity="0.5" />
+              <circle cx="50" cy="185" r="2.5" fill="#b4d7e8" opacity="0.5" />
+              <circle cx="148" cy="155" r="2" fill="#b4d7e8" opacity="0.6" />
+            </svg>
+
+            {/* Animated glow behind bucket */}
+            <div
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '350px',
+                height: '350px',
+                background: 'radial-gradient(circle, rgba(255,215,0,0.2) 0%, rgba(255,107,107,0.1) 40%, transparent 70%)',
+                animation: 'splash-glow-pulse 2s ease-in-out infinite',
+                zIndex: -1,
+              }}
+            />
+          </div>
+
+          {/* Game title with golden letters */}
+          <div
+            className="text-center mb-8"
+            style={{
+              animation: 'splash-title-entrance 0.8s ease-out forwards',
+            }}
+          >
+            <h1
+              style={{
+                fontSize: 'clamp(24px, 6vw, 48px)',
+                color: '#ffd700',
+                textShadow: `
+                  4px 4px 0 #ff6b6b,
+                  8px 8px 0 #4a4a8a,
+                  0 0 20px rgba(255,215,0,0.5),
+                  0 0 40px rgba(255,215,0,0.3),
+                  0 0 60px rgba(255,107,107,0.2)
+                `,
+                letterSpacing: '4px',
+                animation: 'splash-title-glow 1.5s ease-in-out infinite',
+              }}
+            >
+              SPIN THE BOTTLE
+            </h1>
+            <div
+              style={{
+                fontSize: 'clamp(8px, 2vw, 12px)',
+                color: '#7fdbca',
+                marginTop: '12px',
+                letterSpacing: '3px',
+                opacity: 0.9,
+              }}
+            >
+              PIXEL BOTTLE PICKER DELUXE
+            </div>
+          </div>
+
+          {/* Loading bar container */}
+          <div
+            style={{
+              width: 'clamp(250px, 60vw, 400px)',
+              padding: '4px',
+              backgroundColor: '#16213e',
+              boxShadow: `
+                6px 0 0 0 #1a1a2e,
+                -6px 0 0 0 #1a1a2e,
+                0 6px 0 0 #1a1a2e,
+                0 -6px 0 0 #1a1a2e,
+                6px 6px 0 0 #1a1a2e,
+                -6px 6px 0 0 #1a1a2e,
+                6px -6px 0 0 #1a1a2e,
+                -6px -6px 0 0 #1a1a2e
+              `,
+            }}
+          >
+            {/* Loading bar with pixel segments */}
+            <div
+              style={{
+                height: '24px',
+                backgroundColor: '#0f0f23',
+                display: 'flex',
+                gap: '2px',
+                padding: '2px',
+              }}
+            >
+              {Array.from({ length: 20 }).map((_, i) => {
+                // Each segment represents 5% (100/20 = 5)
+                // Segment i fills when progress > i * 5
+                const segmentStart = i * 5;
+                const isFilled = loadingProgress > segmentStart;
+                return (
+                  <div
+                    key={`segment-${i}`}
+                    style={{
+                      flex: 1,
+                      backgroundColor: isFilled ? '#ffd700' : '#1a1a2e',
+                      boxShadow: isFilled ? '0 0 6px rgba(255,215,0,0.6)' : 'none',
+                      transition: 'background-color 0.15s ease-out, box-shadow 0.15s ease-out',
+                    }}
+                  />
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Loading text */}
+          <div
+            style={{
+              marginTop: '16px',
+              color: '#7fdbca',
+              fontSize: '10px',
+              letterSpacing: '2px',
+              animation: 'splash-text-blink 0.8s ease-in-out infinite',
+            }}
+          >
+            {loadingProgress < 100 ? 'LOADING PARTY MODE...' : 'GET READY!'}
+          </div>
+
+          {/* Progress percentage */}
+          <div
+            style={{
+              marginTop: '8px',
+              color: '#ffd700',
+              fontSize: '14px',
+            }}
+          >
+            {Math.floor(loadingProgress)}%
+          </div>
+        </div>
+      )}
+
       <div className="container mx-auto px-4 py-4 md:py-8 max-w-4xl">
         {/* Control buttons - Mute & Stats */}
         <div className="flex justify-between items-center mb-4">

@@ -372,3 +372,105 @@
   max-height: 300px;
   overflow-y: auto;
 }
+
+/* ===== SPLASH SCREEN ANIMATIONS ===== */
+
+/* Title entrance animation */
+@keyframes splash-title-entrance {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Title glow pulsing */
+@keyframes splash-title-glow {
+  0%, 100% {
+    filter: brightness(1) drop-shadow(0 0 20px rgba(255,215,0,0.5));
+  }
+  50% {
+    filter: brightness(1.2) drop-shadow(0 0 30px rgba(255,215,0,0.8));
+  }
+}
+
+/* Glow pulse behind bucket */
+@keyframes splash-glow-pulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 1;
+  }
+}
+
+/* Loading bar shimmer effect */
+@keyframes splash-bar-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Loading text blink */
+@keyframes splash-text-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Confetti shimmer on ground */
+@keyframes splash-confetti-shimmer {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+/* Floating sparkle particles */
+@keyframes splash-sparkle-float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.6;
+  }
+  25% {
+    transform: translateY(-10px) scale(1.2);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-5px) scale(0.8);
+    opacity: 0.8;
+  }
+  75% {
+    transform: translateY(-15px) scale(1.1);
+    opacity: 0.9;
+  }
+}
+
+/* Bucket gentle bob animation */
+@keyframes splash-bucket-bob {
+  0%, 100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+}
+
+.splash-bucket-container {
+  animation: splash-bucket-bob 3s ease-in-out infinite;
+}
