@@ -347,16 +347,21 @@
 
 /* Mobile responsive styles */
 @media (max-width: 768px) {
+  .flip-container {
+    overflow: hidden !important;
+  }
   .flip-card {
     height: 450px;
     min-height: unset;
   }
   .game-container {
     transform: scale(0.6);
-    transform-origin: top center;
+    transform-origin: top left;
     width: 700px !important;
     height: 750px !important;
-    margin-left: calc(50% - 210px) !important;
+    position: relative !important;
+    left: 50% !important;
+    margin-left: -210px !important;
   }
   .editor-container {
     padding: 1rem;
@@ -369,8 +374,9 @@
   }
   .game-container {
     transform: scale(0.45);
-    transform-origin: top center;
-    margin-left: calc(50% - 157.5px) !important;
+    transform-origin: top left;
+    left: 50% !important;
+    margin-left: -157.5px !important;
   }
 }
 
