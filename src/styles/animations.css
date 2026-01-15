@@ -385,6 +385,42 @@
   overflow-y: auto;
 }
 
+/* Winner name responsive styles */
+@media (max-width: 768px) {
+  .winner-name {
+    font-size: clamp(24px, 8vw, 40px) !important;
+    text-shadow: 2px 2px 0 #ff6b6b, 4px 4px 0 #4a4a8a !important;
+    padding: 0 10px;
+  }
+  .winner-label {
+    font-size: 16px !important;
+  }
+  .winner-celebration {
+    gap: 1.5rem !important;
+  }
+  .winner-celebration .dancing {
+    width: 60px !important;
+    height: 60px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .winner-name {
+    font-size: clamp(20px, 7vw, 32px) !important;
+    text-shadow: 1px 1px 0 #ff6b6b, 2px 2px 0 #4a4a8a !important;
+  }
+  .winner-label {
+    font-size: 14px !important;
+  }
+  .winner-celebration {
+    gap: 0.75rem !important;
+  }
+  .winner-celebration .dancing {
+    width: 50px !important;
+    height: 50px !important;
+  }
+}
+
 /* ===== SPLASH SCREEN ANIMATIONS ===== */
 
 /* Title entrance animation */
