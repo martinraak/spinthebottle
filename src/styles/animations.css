@@ -356,12 +356,10 @@
   }
   .game-container {
     transform: scale(0.6);
-    transform-origin: top left;
+    transform-origin: top center;
     width: 700px !important;
     height: 750px !important;
-    position: relative !important;
-    left: 50% !important;
-    margin-left: -210px !important;
+    margin: 0 auto !important;
   }
   .editor-container {
     padding: 1rem;
@@ -374,9 +372,7 @@
   }
   .game-container {
     transform: scale(0.45);
-    transform-origin: top left;
-    left: 50% !important;
-    margin-left: -157.5px !important;
+    transform-origin: top center;
   }
 }
 
