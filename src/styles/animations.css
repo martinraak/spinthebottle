@@ -365,8 +365,7 @@
     height: 750px !important;
   }
   .editor-container {
-    padding-top: 2rem;
-    justify-content: flex-start !important;
+    justify-content: center !important;
   }
 }
 
@@ -380,9 +379,6 @@
   .game-container {
     transform: scale(0.45);
     transform-origin: top left;
-  }
-  .editor-container {
-    padding-top: 1rem;
   }
 }
 
