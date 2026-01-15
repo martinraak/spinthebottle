@@ -809,8 +809,8 @@ export default function SpinTheBottle() {
 
             {/* FRONT SIDE - Editor View */}
             <div className="flip-card-front">
-              <div className="relative w-full h-full flex flex-col items-center justify-center">
-                {/* Decorative circle background */}
+              <div className="relative w-full h-full" style={{ width: '700px', height: '700px' }}>
+                {/* Decorative circle background - centered like game view */}
                 <div
                   className="absolute rounded-full"
                   style={{
@@ -824,8 +824,15 @@ export default function SpinTheBottle() {
                   }}
                 />
 
-                {/* Editor content */}
-                <div className="relative z-10 w-full max-w-md px-8">
+                {/* Editor content - absolutely centered like game view */}
+                <div
+                  className="absolute z-10 w-full max-w-md px-8"
+                  style={{
+                    left: '50%',
+                    top: '50%',
+                    transform: 'translate(-50%, -50%)',
+                  }}
+                >
                   {/* Title */}
                   <div
                     className="text-center mb-6"
