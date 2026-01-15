@@ -3,6 +3,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 // Import refactored modules
 import { DANCING_ANIMALS, FLYING_OBJECTS } from './components/PixelArt';
 import { useAudio } from './hooks/useAudio';
+import { useAnalytics } from './hooks/useAnalytics';
 import { useLocalStorage, useStorageError, STORAGE_KEYS } from './hooks/useLocalStorage';
 import { BOTTLE_COLOR, FOAM_COLORS, CONFETTI_COLORS, SPIN_PHYSICS, TIMING } from './utils/constants';
 import './styles/animations.css';
@@ -52,6 +53,9 @@ export default function SpinTheBottle() {
   // Audio hook with proper React state management
   const audio = useAudio(isMuted);
 
+  // Analytics tracking
+  const analytics = useAnalytics();
+
   // Generate confetti particles
   const generateConfetti = useCallback(() => {
     const particles = [];
@@ -73,15 +77,19 @@ export default function SpinTheBottle() {
   // Add new name
   const addName = () => {
     if (newName.trim() && !names.includes(newName.trim())) {
-      setNames([...names, newName.trim()]);
+      const newNames = [...names, newName.trim()];
+      setNames(newNames);
       setNewName('');
+      analytics.trackPlayerAdded(newNames.length);
     }
   };
 
   // Remove name
   const removeName = (index) => {
-    setNames(names.filter((_, i) => i !== index));
+    const newNames = names.filter((_, i) => i !== index);
+    setNames(newNames);
     if (winner === names[index]) setWinner(null);
+    analytics.trackPlayerRemoved(newNames.length);
   };
 
   // Shuffle names
@@ -230,6 +238,7 @@ export default function SpinTheBottle() {
           setWinner(selectedName);
           setWinnerIndex(selectedIndex);
           setShowSparkle(true);
+          analytics.trackSpin(names.length, selectedName);
 
           // Update win history
           if (selectedName) {
@@ -611,7 +620,10 @@ export default function SpinTheBottle() {
         <div className="flex justify-between items-center mb-4">
           {/* Stats button */}
           <button
-            onClick={() => setShowStats(!showStats)}
+            onClick={() => {
+              if (!showStats) analytics.trackStatsViewed();
+              setShowStats(!showStats);
+            }}
             className="pixel-border px-3 py-2 transition-opacity hover:opacity-80 flex items-center gap-2"
             style={{
               backgroundColor: showStats ? '#2d5a27' : '#4a4a8a',
@@ -636,6 +648,7 @@ export default function SpinTheBottle() {
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.href);
                   setShareCopied(true);
+                  analytics.trackShare();
                   setTimeout(() => setShareCopied(false), 1500);
                 }}
                 className="pixel-border px-3 py-2 transition-all hover:opacity-80 flex items-center justify-center"
@@ -678,7 +691,11 @@ export default function SpinTheBottle() {
             {/* Mute toggle */}
             <div className="relative group">
               <button
-                onClick={() => setIsMuted(!isMuted)}
+                onClick={() => {
+                  const newMuted = !isMuted;
+                  setIsMuted(newMuted);
+                  analytics.trackMuteToggle(newMuted);
+                }}
                 className="pixel-border px-3 py-2 transition-opacity hover:opacity-80 flex items-center justify-center"
                 style={{
                   backgroundColor: isMuted ? '#8b0000' : '#4a4a8a',
@@ -974,6 +991,7 @@ export default function SpinTheBottle() {
                     onClick={() => {
                       if (names.length >= 2) {
                         audio.playStartGameSound();
+                        analytics.trackGameStart(names.length);
                         setIsEditorView(false);
                       }
                     }}
