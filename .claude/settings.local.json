@@ -7,7 +7,8 @@
       "Bash(git push:*)",
       "Bash(rm:*)",
       "Bash(git add:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nFix Tailwind config and add localStorage error handling\n\n- Add ./src/**/*.{js,jsx} to Tailwind content paths (fixes broken layout)\n- Add graceful localStorage error handling with user notification\n- Delete unused root-level SpinTheBottle.jsx file\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(git commit -m \"$(cat <<''EOF''\nFix Tailwind config and add localStorage error handling\n\n- Add ./src/**/*.{js,jsx} to Tailwind content paths (fixes broken layout)\n- Add graceful localStorage error handling with user notification\n- Delete unused root-level SpinTheBottle.jsx file\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git commit -m \"$(cat <<''EOF''\nFix mobile layout - center scaled game container\n\n- Add overflow-hidden to flip-container\n- Calculate proper margin-left for centered scaling on mobile\n- Set explicit flip-card heights for different breakpoints\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n)\")"
     ]
   }
 }

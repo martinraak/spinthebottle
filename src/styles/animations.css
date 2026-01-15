@@ -348,12 +348,15 @@
 /* Mobile responsive styles */
 @media (max-width: 768px) {
   .flip-card {
-    height: auto;
-    min-height: 500px;
+    height: 450px;
+    min-height: unset;
   }
   .game-container {
     transform: scale(0.6);
     transform-origin: top center;
+    width: 700px !important;
+    height: 750px !important;
+    margin-left: calc(50% - 210px) !important;
   }
   .editor-container {
     padding: 1rem;
@@ -361,9 +364,13 @@
 }
 
 @media (max-width: 480px) {
+  .flip-card {
+    height: 340px;
+  }
   .game-container {
     transform: scale(0.45);
     transform-origin: top center;
+    margin-left: calc(50% - 157.5px) !important;
   }
 }
 

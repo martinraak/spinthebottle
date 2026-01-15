@@ -803,8 +803,8 @@ export default function SpinTheBottle() {
         </h1>
 
         {/* Flip Container */}
-        <div className="flip-container mx-auto mb-8" style={{ maxWidth: '700px', width: '100%' }}>
-          <div className="game-container mx-auto" style={{ width: '700px', height: '750px' }}>
+        <div className="flip-container mx-auto mb-8 overflow-hidden" style={{ maxWidth: '700px', width: '100%' }}>
+          <div className="game-container" style={{ width: '700px', height: '750px' }}>
             <div className={`flip-card ${!isEditorView ? 'flipped' : ''}`}>
 
             {/* FRONT SIDE - Editor View */}
