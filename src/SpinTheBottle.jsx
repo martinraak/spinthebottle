@@ -1604,7 +1604,7 @@ export default function SpinTheBottle() {
                 style={{
                   backgroundColor: '#16213e',
                   borderColor: '#ffd700',
-                  maxWidth: '70vw',
+                  maxWidth: '90vw',
                   minWidth: '200px',
                 }}
               >
@@ -1617,8 +1617,7 @@ export default function SpinTheBottle() {
                     fontSize: winner && winner.length > 12 ? (winner.length > 20 ? '28px' : '40px') : '56px',
                     color: '#ffd700',
                     textShadow: '3px 3px 0 #ff6b6b, 6px 6px 0 #4a4a8a',
-                    wordBreak: 'break-word',
-                    overflowWrap: 'break-word',
+                    whiteSpace: 'nowrap',
                     lineHeight: '1.2',
                   }}
                 >
