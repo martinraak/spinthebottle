@@ -809,7 +809,7 @@ export default function SpinTheBottle() {
 
             {/* FRONT SIDE - Editor View */}
             <div className="flip-card-front">
-              <div className="relative w-full h-full flex flex-col items-center justify-center">
+              <div className="relative w-full h-full flex flex-col items-center editor-container">
                 {/* Decorative circle background */}
                 <div
                   className="absolute rounded-full"

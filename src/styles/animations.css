@@ -355,7 +355,7 @@
     margin-right: auto !important;
   }
   .flip-card {
-    height: 420px;
+    height: 450px;
     min-height: unset;
   }
   .game-container {
@@ -365,7 +365,8 @@
     height: 750px !important;
   }
   .editor-container {
-    padding: 1rem;
+    padding-top: 2rem;
+    justify-content: flex-start !important;
   }
 }
 
@@ -374,11 +375,14 @@
     width: 315px !important;
   }
   .flip-card {
-    height: 320px;
+    height: 340px;
   }
   .game-container {
     transform: scale(0.45);
     transform-origin: top left;
+  }
+  .editor-container {
+    padding-top: 1rem;
   }
 }
 
