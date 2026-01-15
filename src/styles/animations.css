@@ -349,6 +349,8 @@
 @media (max-width: 768px) {
   .flip-container {
     overflow: hidden !important;
+    display: flex !important;
+    justify-content: center !important;
   }
   .flip-card {
     height: 450px;
@@ -359,7 +361,7 @@
     transform-origin: top center;
     width: 700px !important;
     height: 750px !important;
-    margin: 0 auto !important;
+    flex-shrink: 0 !important;
   }
   .editor-container {
     padding: 1rem;
