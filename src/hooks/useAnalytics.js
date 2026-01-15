@@ -14,8 +14,15 @@ function initPostHog() {
     return;
   }
 
+  // Use reverse proxy to avoid ad blockers on mobile
+  const isProduction = window.location.hostname !== 'localhost';
+  const apiHost = isProduction
+    ? '/ingest'  // Proxied through Vercel rewrites
+    : (import.meta.env.VITE_POSTHOG_HOST || 'https://eu.i.posthog.com');
+
   posthog.init(apiKey, {
-    api_host: import.meta.env.VITE_POSTHOG_HOST || 'https://us.i.posthog.com',
+    api_host: apiHost,
+    ui_host: 'https://eu.posthog.com', // For toolbar/surveys
     person_profiles: 'identified_only',
     capture_pageview: true,
     capture_pageleave: true,
