@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(gh repo create:*)",
+      "Bash(timeout 5 npm run dev:*)",
+      "Bash(git push:*)",
+      "Bash(rm:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nFix Tailwind config and add localStorage error handling\n\n- Add ./src/**/*.{js,jsx} to Tailwind content paths (fixes broken layout)\n- Add graceful localStorage error handling with user notification\n- Delete unused root-level SpinTheBottle.jsx file\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n)\")"
     ]
   }
 }

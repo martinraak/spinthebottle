@@ -3,7 +3,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 // Import refactored modules
 import { DANCING_ANIMALS, FLYING_OBJECTS } from './components/PixelArt';
 import { useAudio } from './hooks/useAudio';
-import { useLocalStorage, STORAGE_KEYS } from './hooks/useLocalStorage';
+import { useLocalStorage, useStorageError, STORAGE_KEYS } from './hooks/useLocalStorage';
 import { BOTTLE_COLOR, FOAM_COLORS, CONFETTI_COLORS, SPIN_PHYSICS, TIMING } from './utils/constants';
 import './styles/animations.css';
 
@@ -39,6 +39,10 @@ export default function SpinTheBottle() {
   const [isEditorView, setIsEditorView] = useState(true);
   const [showStats, setShowStats] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
+
+  // Storage error tracking for graceful degradation
+  const storageError = useStorageError();
+  const [storageErrorDismissed, setStorageErrorDismissed] = useState(false);
 
   // Refs for animation state (fixes memory leak issue #3)
   const animationRef = useRef(null);
@@ -338,6 +342,29 @@ export default function SpinTheBottle() {
 
   return (
     <div className="min-h-screen pixel-font text-xs" style={{ backgroundColor: '#0f0f23' }}>
+      {/* Storage Error Notification */}
+      {storageError && !storageErrorDismissed && (
+        <div
+          className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-4 py-3 rounded-lg flex items-center gap-3"
+          style={{
+            backgroundColor: 'rgba(255, 165, 0, 0.95)',
+            color: '#1a1a2e',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+            maxWidth: '90vw',
+          }}
+        >
+          <span style={{ fontSize: '16px' }}>!</span>
+          <span className="flex-1">Storage unavailable. Your settings won't be saved.</span>
+          <button
+            onClick={() => setStorageErrorDismissed(true)}
+            className="ml-2 px-2 py-1 hover:opacity-80"
+            style={{ backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: '4px' }}
+          >
+            OK
+          </button>
+        </div>
+      )}
+
       {/* Loading Splash Screen */}
       {showSplash && (
         <div
@@ -841,7 +868,7 @@ export default function SpinTheBottle() {
                         type="text"
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && addName()}
+                        onKeyDown={(e) => e.key === 'Enter' && addName()}
                         className="pixel-border flex-1 px-3 py-2"
                         style={{
                           backgroundColor: '#0f0f23',
