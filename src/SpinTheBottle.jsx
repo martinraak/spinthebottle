@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import Tesseract from 'tesseract.js';
 
 // Import refactored modules
 import { DANCING_ANIMALS, FLYING_OBJECTS } from './components/PixelArt';
@@ -1863,24 +1864,44 @@ export default function SpinTheBottle() {
                     setIsExtracting(true);
                     setImportError(null);
                     try {
-                      const response = await fetch('/api/extract-names', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ image: importImage }),
+                      // Use Tesseract.js for OCR (runs in browser, free)
+                      const result = await Tesseract.recognize(importImage, 'eng', {
+                        logger: () => {}, // Suppress logs
                       });
-                      const data = await response.json();
-                      if (!response.ok) {
-                        throw new Error(data.error || 'Failed to extract names');
-                      }
-                      if (data.names && data.names.length > 0) {
-                        setImportedNames(data.names);
+
+                      // Extract text and parse names
+                      const text = result.data.text;
+
+                      // Split by newlines and filter for valid names
+                      const extractedNames = text
+                        .split('\n')
+                        .map(line => line.trim())
+                        // Filter out empty lines and common non-name patterns
+                        .filter(line => {
+                          if (!line || line.length < 2 || line.length > 50) return false;
+                          // Skip lines that look like timestamps, URLs, or system text
+                          if (/^\d{1,2}:\d{2}/.test(line)) return false; // Time like 10:30
+                          if (/^(http|www\.|@)/.test(line)) return false; // URLs or handles
+                          if (/^(you|host|me|\(|\[|share|screen|mute|unmute|video|chat|participants|leave|record)/i.test(line)) return false;
+                          // Skip if mostly numbers or special chars
+                          const letterCount = (line.match(/[a-zA-Z]/g) || []).length;
+                          if (letterCount < line.length * 0.5) return false;
+                          return true;
+                        })
+                        // Clean up names - remove parenthetical suffixes
+                        .map(name => name.replace(/\s*\([^)]*\)\s*$/, '').trim())
+                        // Remove duplicates
+                        .filter((name, index, arr) => arr.indexOf(name) === index);
+
+                      if (extractedNames.length > 0) {
+                        setImportedNames(extractedNames);
                         const initialSelection = {};
-                        data.names.forEach((name) => {
+                        extractedNames.forEach((name) => {
                           initialSelection[name] = true;
                         });
                         setSelectedNames(initialSelection);
                       } else {
-                        setImportError('No names found in the screenshot. Try a clearer image.');
+                        setImportError('No names found in the screenshot. Try a clearer image with visible participant names.');
                       }
                     } catch (err) {
                       setImportError(err.message || 'Failed to extract names');
