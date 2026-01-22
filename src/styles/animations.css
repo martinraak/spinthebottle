@@ -522,3 +522,29 @@
 .splash-bucket-container {
   animation: splash-bucket-bob 3s ease-in-out infinite;
 }
+
+/* ===== IMPORT MODAL ANIMATIONS ===== */
+
+/* Spinner animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Dropzone pulse on drag over */
+.import-dropzone.drag-over {
+  animation: dropzone-pulse 0.5s ease-in-out infinite;
+}
+
+@keyframes dropzone-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}

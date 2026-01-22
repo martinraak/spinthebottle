@@ -45,6 +45,16 @@ export default function SpinTheBottle() {
   const storageError = useStorageError();
   const [storageErrorDismissed, setStorageErrorDismissed] = useState(false);
 
+  // Screenshot import modal state
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importImage, setImportImage] = useState(null);
+  const [importedNames, setImportedNames] = useState([]);
+  const [selectedNames, setSelectedNames] = useState({});
+  const [isExtracting, setIsExtracting] = useState(false);
+  const [importError, setImportError] = useState(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const fileInputRef = useRef(null);
+
   // Refs for animation state (fixes memory leak issue #3)
   const animationRef = useRef(null);
   const velocityRef = useRef(0);
@@ -907,13 +917,36 @@ export default function SpinTheBottle() {
                       />
                       <button
                         onClick={addName}
-                        className="pixel-border px-4 py-2 hover:opacity-80 transition-opacity"
+                        className="pixel-border px-3 py-2 hover:opacity-80 transition-opacity"
                         style={{
                           backgroundColor: '#2d5a27',
                           color: '#e0e0e0'
                         }}
                       >
                         ADD
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowImportModal(true);
+                          setImportImage(null);
+                          setImportedNames([]);
+                          setSelectedNames({});
+                          setImportError(null);
+                        }}
+                        className="pixel-border px-3 py-2 hover:opacity-80 transition-opacity flex items-center gap-1"
+                        style={{
+                          backgroundColor: '#4a4a8a',
+                          color: '#e0e0e0'
+                        }}
+                        title="Import names from screenshot"
+                      >
+                        <svg viewBox="0 0 16 16" width="12" height="12" style={{ imageRendering: 'pixelated' }}>
+                          <rect x="2" y="2" width="12" height="10" fill="none" stroke="#e0e0e0" strokeWidth="2"/>
+                          <rect x="4" y="12" width="8" height="2" fill="#e0e0e0"/>
+                          <circle cx="6" cy="6" r="1.5" fill="#ffd700"/>
+                          <polygon points="5,10 8,6 10,8 12,5 12,10" fill="#7fdbca"/>
+                        </svg>
+                        IMPORT
                       </button>
                     </div>
                   </div>
@@ -1665,6 +1698,314 @@ export default function SpinTheBottle() {
           ★ PIXEL BOTTLE PICKER ★
         </div>
       </div>
+
+      {/* Screenshot Import Modal */}
+      {showImportModal && (
+        <div
+          className="fixed inset-0 flex items-center justify-center"
+          style={{
+            zIndex: 1000,
+            backgroundColor: 'rgba(15, 15, 35, 0.95)',
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !isExtracting) {
+              setShowImportModal(false);
+            }
+          }}
+        >
+          <div
+            className="pixel-border-thick p-6 mx-4"
+            style={{
+              backgroundColor: '#16213e',
+              maxWidth: '500px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Title */}
+            <div
+              className="text-center mb-6"
+              style={{ color: '#ffd700', fontSize: '14px' }}
+            >
+              IMPORT FROM SCREENSHOT
+            </div>
+
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = (event) => {
+                    setImportImage(event.target.result);
+                    setImportedNames([]);
+                    setSelectedNames({});
+                    setImportError(null);
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }}
+            />
+
+            {/* Drop Zone - shown when no image */}
+            {!importImage && !isExtracting && (
+              <div
+                className={`import-dropzone ${isDragOver ? 'drag-over' : ''}`}
+                style={{
+                  border: `3px dashed ${isDragOver ? '#ffd700' : '#4a4a8a'}`,
+                  borderRadius: '4px',
+                  padding: '40px 20px',
+                  textAlign: 'center',
+                  cursor: 'pointer',
+                  backgroundColor: isDragOver ? 'rgba(255, 215, 0, 0.1)' : 'transparent',
+                  transition: 'all 0.2s ease',
+                }}
+                onClick={() => fileInputRef.current?.click()}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDragOver(true);
+                }}
+                onDragLeave={(e) => {
+                  e.preventDefault();
+                  setIsDragOver(false);
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setIsDragOver(false);
+                  const file = e.dataTransfer.files?.[0];
+                  if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                      setImportImage(event.target.result);
+                      setImportedNames([]);
+                      setSelectedNames({});
+                      setImportError(null);
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+              >
+                <svg viewBox="0 0 48 48" width="48" height="48" style={{ margin: '0 auto 16px', display: 'block' }}>
+                  <rect x="4" y="8" width="40" height="32" fill="none" stroke="#7fdbca" strokeWidth="3"/>
+                  <circle cx="16" cy="20" r="4" fill="#ffd700"/>
+                  <polygon points="12,36 20,24 28,32 36,20 40,36" fill="#7fdbca"/>
+                  <rect x="20" y="2" width="8" height="10" fill="#4a4a8a"/>
+                  <polygon points="16,12 24,4 32,12" fill="#4a4a8a"/>
+                </svg>
+                <div style={{ color: '#7fdbca', fontSize: '10px', marginBottom: '8px' }}>
+                  DROP SCREENSHOT HERE
+                </div>
+                <div style={{ color: '#4a4a8a', fontSize: '8px' }}>
+                  or click to select file
+                </div>
+              </div>
+            )}
+
+            {/* Image Preview */}
+            {importImage && !isExtracting && importedNames.length === 0 && (
+              <div className="mb-4">
+                <div
+                  style={{
+                    position: 'relative',
+                    borderRadius: '4px',
+                    overflow: 'hidden',
+                    marginBottom: '16px',
+                  }}
+                >
+                  <img
+                    src={importImage}
+                    alt="Screenshot preview"
+                    style={{
+                      width: '100%',
+                      maxHeight: '200px',
+                      objectFit: 'contain',
+                      backgroundColor: '#0f0f23',
+                    }}
+                  />
+                  <button
+                    onClick={() => {
+                      setImportImage(null);
+                      setImportError(null);
+                    }}
+                    className="pixel-border"
+                    style={{
+                      position: 'absolute',
+                      top: '8px',
+                      right: '8px',
+                      backgroundColor: '#8b0000',
+                      color: '#fff',
+                      padding: '4px 8px',
+                      fontSize: '8px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {importError && (
+                  <div
+                    className="pixel-border mb-4 p-3 text-center"
+                    style={{ backgroundColor: '#8b0000', color: '#fff', fontSize: '9px' }}
+                  >
+                    {importError}
+                  </div>
+                )}
+
+                <button
+                  onClick={async () => {
+                    setIsExtracting(true);
+                    setImportError(null);
+                    try {
+                      const response = await fetch('/api/extract-names', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ image: importImage }),
+                      });
+                      const data = await response.json();
+                      if (!response.ok) {
+                        throw new Error(data.error || 'Failed to extract names');
+                      }
+                      if (data.names && data.names.length > 0) {
+                        setImportedNames(data.names);
+                        const initialSelection = {};
+                        data.names.forEach((name) => {
+                          initialSelection[name] = true;
+                        });
+                        setSelectedNames(initialSelection);
+                      } else {
+                        setImportError('No names found in the screenshot. Try a clearer image.');
+                      }
+                    } catch (err) {
+                      setImportError(err.message || 'Failed to extract names');
+                    } finally {
+                      setIsExtracting(false);
+                    }
+                  }}
+                  className="pixel-border w-full py-3 hover:opacity-80 transition-opacity"
+                  style={{
+                    backgroundColor: '#2d5a27',
+                    color: '#ffd700',
+                    fontSize: '12px',
+                  }}
+                >
+                  EXTRACT NAMES
+                </button>
+              </div>
+            )}
+
+            {/* Loading State */}
+            {isExtracting && (
+              <div className="text-center py-8">
+                <div
+                  className="inline-block mb-4"
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    border: '4px solid #4a4a8a',
+                    borderTopColor: '#ffd700',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite',
+                  }}
+                />
+                <div style={{ color: '#7fdbca', fontSize: '10px' }}>
+                  EXTRACTING NAMES...
+                </div>
+              </div>
+            )}
+
+            {/* Names List */}
+            {importedNames.length > 0 && !isExtracting && (
+              <div>
+                <div
+                  className="mb-3"
+                  style={{ color: '#7fdbca', fontSize: '10px', textAlign: 'center' }}
+                >
+                  FOUND {importedNames.length} NAME{importedNames.length !== 1 ? 'S' : ''}
+                </div>
+                <div
+                  className="mb-4 p-2"
+                  style={{
+                    backgroundColor: '#0f0f23',
+                    borderRadius: '4px',
+                    maxHeight: '200px',
+                    overflowY: 'auto',
+                  }}
+                >
+                  {importedNames.map((name, index) => (
+                    <label
+                      key={index}
+                      className="flex items-center gap-2 p-2 cursor-pointer hover:opacity-80"
+                      style={{ color: '#e0e0e0', fontSize: '11px' }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedNames[name] || false}
+                        onChange={(e) => {
+                          setSelectedNames((prev) => ({
+                            ...prev,
+                            [name]: e.target.checked,
+                          }));
+                        }}
+                        style={{ accentColor: '#ffd700' }}
+                      />
+                      <span style={{ color: names.includes(name) ? '#4a4a8a' : '#e0e0e0' }}>
+                        {name}
+                        {names.includes(name) && (
+                          <span style={{ color: '#7fdbca', fontSize: '8px', marginLeft: '8px' }}>
+                            (already added)
+                          </span>
+                        )}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                <button
+                  onClick={() => {
+                    const namesToAdd = importedNames.filter(
+                      (name) => selectedNames[name] && !names.includes(name)
+                    );
+                    if (namesToAdd.length > 0) {
+                      setNames([...names, ...namesToAdd]);
+                    }
+                    setShowImportModal(false);
+                  }}
+                  className="pixel-border w-full py-3 hover:opacity-80 transition-opacity"
+                  style={{
+                    backgroundColor: '#2d5a27',
+                    color: '#ffd700',
+                    fontSize: '12px',
+                  }}
+                >
+                  ADD {Object.values(selectedNames).filter(Boolean).length} SELECTED
+                </button>
+              </div>
+            )}
+
+            {/* Cancel Button */}
+            <button
+              onClick={() => setShowImportModal(false)}
+              disabled={isExtracting}
+              className="pixel-border w-full py-2 mt-3 hover:opacity-80 transition-opacity"
+              style={{
+                backgroundColor: '#4a4a8a',
+                color: '#e0e0e0',
+                fontSize: '10px',
+                opacity: isExtracting ? 0.5 : 1,
+                cursor: isExtracting ? 'not-allowed' : 'pointer',
+              }}
+            >
+              CANCEL
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
